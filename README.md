@@ -13,6 +13,8 @@ Part 2 is the simulation exercise.
 | `hw4_part2_simulation.py` | Part 2 coding problem: Type I error simulation (A), Type II error and power across sample sizes (B), and the power curve (C) with its plot. |
 | `hw4_part1_analysis.py` | Numerical verification of the Part 1 answers, plus the figures used in the write-up. |
 | `figures/` | All generated figures (`.png` and `.pdf`). |
+| `Homework4_Orlando_Leng.pdf` | The submitted write-up. |
+| `homework4_writeup.tex` | LaTeX source of the write-up. |
 
 ## Running
 

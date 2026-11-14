@@ -184,7 +184,13 @@ plt.rcParams.update({
     "font.family": "serif",
     "font.serif": ["Times New Roman", "DejaVu Serif"],
     "mathtext.fontset": "stix",
-    "font.size": 10,
+    # sized so the figure stays legible after being scaled into the write-up
+    "font.size": 13,
+    "axes.labelsize": 13,
+    "axes.titlesize": 14,
+    "xtick.labelsize": 12,
+    "ytick.labelsize": 12,
+    "legend.fontsize": 11,
     "axes.linewidth": 0.8,
 })
 
@@ -202,7 +208,7 @@ plt.axhline(alpha, color="0.25", lw=0.9, ls="-.", label=r"$\alpha = 0.05$")
 plt.xlabel("True Population Mean")
 plt.ylabel("Probability of Rejecting H0")
 plt.title("Power Curve")
-plt.legend(loc="lower right", frameon=True, framealpha=1, edgecolor="0.7", fontsize=9)
+plt.legend(loc="lower right", frameon=True, framealpha=1, edgecolor="0.7")
 plt.grid(True, color="0.85", lw=0.6)
 plt.ylim(-0.03, 1.05)
 plt.xlim(44.8, 55.2)
@@ -213,4 +219,41 @@ os.makedirs(FIGDIR, exist_ok=True)
 plt.savefig(os.path.join(FIGDIR, "power_curve.png"), dpi=200)
 plt.savefig(os.path.join(FIGDIR, "power_curve.pdf"))
 print(f"\nSaved {FIGDIR}/power_curve.png and {FIGDIR}/power_curve.pdf")
+
+
+# ============================================================
+# Discussion C(d): how the curve changes when n goes 30 -> 100
+# ============================================================
+fig, ax = plt.subplots(figsize=(7.2, 3.8))
+for nn, style, lab in [(30, "-", "n = 30"), (100, (0, (5, 2)), "n = 100")]:
+    d = (mu_true_values - mu_0) / (sigma / np.sqrt(nn))
+    pw = (1 - stats.norm.cdf(z_crit - d)) + stats.norm.cdf(-z_crit - d)
+    ax.plot(mu_true_values, pw, ls=style, color="0.1", lw=1.3, label=lab)
+ax.axhline(alpha, color="0.4", lw=0.8, ls="-.")
+ax.axvline(mu_0, color="0.4", lw=0.8, ls=":")
+ax.annotate(r"$\alpha=0.05$", xy=(45.1, 0.08), fontsize=11, color="0.3")
+ax.set_xlabel("True Population Mean"); ax.set_ylabel("Probability of Rejecting H0")
+ax.set_title("Power Curve: effect of sample size")
+ax.legend(loc="upper center"); ax.grid(True, color="0.88", lw=0.6)
+ax.set_ylim(-0.03, 1.05); ax.set_xlim(44.8, 55.2)
+fig.tight_layout()
+fig.savefig(os.path.join(FIGDIR, "power_curve_n_comparison.png"), dpi=200)
+fig.savefig(os.path.join(FIGDIR, "power_curve_n_comparison.pdf"))
+plt.close(fig)
+
+print()
+print("=" * 62)
+print("Discussion C(d) — theoretical two-sided power at selected means")
+print("=" * 62)
+print(f"{'true mu':>9}{'n = 30':>12}{'n = 100':>12}")
+print("-" * 33)
+for m in (50, 51, 52, 53, 54):
+    row = [m]
+    for nn in (30, 100):
+        d = (m - mu_0) / (sigma / np.sqrt(nn))
+        row.append((1 - stats.norm.cdf(z_crit - d)) + stats.norm.cdf(-z_crit - d))
+    print(f"{row[0]:>9}{row[1]:>12.4f}{row[2]:>12.4f}")
+print(f"\nSaved {FIGDIR}/power_curve_n_comparison.png")
+
+# Display the figures (set MPLBACKEND=Agg to run headless).
 plt.show()

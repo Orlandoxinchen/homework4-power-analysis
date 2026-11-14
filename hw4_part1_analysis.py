@@ -14,7 +14,9 @@ os.makedirs(FIGDIR, exist_ok=True)
 
 plt.rcParams.update({
     "font.family": "serif", "font.serif": ["Times New Roman", "DejaVu Serif"],
-    "mathtext.fontset": "stix", "font.size": 9,
+    "mathtext.fontset": "stix", "font.size": 10.5,
+    "axes.labelsize": 10.5, "xtick.labelsize": 9.5, "ytick.labelsize": 9.5,
+    "legend.fontsize": 9.5,
     "axes.linewidth": 0.7, "xtick.major.width": 0.7, "ytick.major.width": 0.7,
     "legend.frameon": False, "axes.spines.top": False, "axes.spines.right": False,
     "figure.dpi": 160, "savefig.bbox": "tight", "savefig.pad_inches": 0.02,
@@ -45,16 +47,16 @@ panels = [("(a)  $P(X<0)$ = %.4f" % p_a,            xs < 0,                 "///
           ("(b)  $P(-1<X<3)$ = %.4f" % p_b,         (xs > -1) & (xs < 3),   "...."),
           ("(c)  $P(X>4)$ = %.4f" % p_c,            xs > 4,                 "\\\\\\\\"),
           ("(d)  bottom 10%%: $x$ = %.3f%%" % x_d,  xs < x_d,               "xxxx")]
-fig, axs = plt.subplots(2, 2, figsize=(6.6, 3.5))
+fig, axs = plt.subplots(2, 2, figsize=(7.4, 4.0))
 for ax, (title, mask, hatch) in zip(axs.ravel(), panels):
     ax.plot(xs, pdf, color="0.1", lw=1.0)
     ax.fill_between(xs, 0, pdf, where=mask, facecolor="0.80",
                     edgecolor="0.25", hatch=hatch, lw=0.0)
-    ax.set_title(title, fontsize=8.5, pad=3)
+    ax.set_title(title, fontsize=10, pad=3)
     ax.set_yticks([]); ax.set_xlim(xs[0], xs[-1]); ax.set_ylim(0, pdf.max()*1.18)
     ax.axvline(mu, color="0.45", lw=0.6, ls=":")
-    ax.tick_params(labelsize=7.5, length=2.5)
-    ax.set_xlabel("daily return (%)", fontsize=7.5, labelpad=1)
+    ax.tick_params(labelsize=8.5, length=2.5)
+    ax.set_xlabel("daily return (%)", fontsize=9, labelpad=1)
     for s in ("top", "right", "left"): ax.spines[s].set_visible(False)
 fig.tight_layout(h_pad=1.0, w_pad=1.4)
 save(fig, "p1_normal")
@@ -71,13 +73,13 @@ print(f"  log-likelihood at lambda_hat: {n*np.log(lam_hat) - lam_hat*S:.6f}")
 
 lams = np.linspace(0.25, 1.6, 500)
 ll = n * np.log(lams) - lams * S
-fig, ax = plt.subplots(figsize=(4.6, 2.5))
+fig, ax = plt.subplots(figsize=(5.6, 2.9))
 ax.plot(lams, ll, color="0.1", lw=1.2)
 ax.axvline(lam_hat, color="0.4", lw=0.8, ls=(0, (4, 2)))
 ax.plot([lam_hat], [n*np.log(lam_hat) - lam_hat*S], "o", ms=4, color="0.1")
 ax.annotate(r"$\hat{\lambda}=%.4f$" % lam_hat,
             xy=(lam_hat, n*np.log(lam_hat) - lam_hat*S), xytext=(8, -10),
-            textcoords="offset points", fontsize=8.5)
+            textcoords="offset points", fontsize=10)
 ax.set_xlabel(r"$\lambda$"); ax.set_ylabel(r"log-likelihood  $\ell(\lambda)$")
 ax.tick_params(length=2.5)
 save(fig, "p2_loglik")
@@ -96,12 +98,12 @@ print(f"  ratio d/c = {n_d/n_c:.3f}")
 
 p1s = np.linspace(0.085, 0.14, 300)
 ns = [nreq(p0, p) for p in p1s]
-fig, ax = plt.subplots(figsize=(4.8, 2.6))
+fig, ax = plt.subplots(figsize=(5.8, 3.0))
 ax.plot(100*(p1s - p0), ns, color="0.1", lw=1.2)
 for lbl, p1, nn in [("(c)  8%$\\to$10%", 0.10, n_c), ("(d)  8%$\\to$9%", 0.09, n_d)]:
     ax.plot([100*(p1-p0)], [nn], "o", ms=4, color="0.1")
     ax.annotate(f"{lbl}\nn = {int(np.ceil(nn)):,}", xy=(100*(p1-p0), nn),
-                xytext=(10, 6), textcoords="offset points", fontsize=8)
+                xytext=(10, 6), textcoords="offset points", fontsize=9.5)
 ax.set_xlabel("effect size to detect, $p_1-p_0$ (percentage points)")
 ax.set_ylabel("required $n$ per group")
 ax.set_yscale("log"); ax.tick_params(length=2.5)
@@ -114,16 +116,16 @@ sizes = np.arange(10, 201, 5)
 z_alpha = stats.norm.ppf(0.95)
 shift = (53 - 50) / (10 / np.sqrt(sizes))
 pw = 1 - stats.norm.cdf(z_alpha - shift)
-fig, ax = plt.subplots(figsize=(4.8, 2.6))
+fig, ax = plt.subplots(figsize=(5.8, 3.0))
 ax.plot(sizes, pw, color="0.1", lw=1.2, label="theoretical power")
 sim = {30: 0.4964, 60: 0.7529, 120: 0.9493}
 ax.plot(list(sim), list(sim.values()), "s", ms=4.5, mfc="white",
         mec="0.1", mew=1.0, label="simulated (10,000 reps)")
 for k, v in sim.items():
-    ax.annotate(f"{v:.3f}", xy=(k, v), xytext=(5, -9), textcoords="offset points", fontsize=8)
+    ax.annotate(f"{v:.3f}", xy=(k, v), xytext=(5, -10), textcoords="offset points", fontsize=9.5)
 ax.axhline(0.8, color="0.45", lw=0.7, ls=":")
-ax.annotate("power = 0.80", xy=(188, 0.805), ha="right", fontsize=8, color="0.3")
+ax.annotate("power = 0.80", xy=(188, 0.815), ha="right", fontsize=9.5, color="0.3")
 ax.set_xlabel("sample size $n$"); ax.set_ylabel("power")
-ax.set_ylim(0, 1.03); ax.legend(loc="lower right", fontsize=8); ax.tick_params(length=2.5)
+ax.set_ylim(0, 1.03); ax.legend(loc="lower right"); ax.tick_params(length=2.5)
 save(fig, "p2b_power_vs_n")
 print("\nAll Part 1 figures written.")
